@@ -29,6 +29,10 @@ public class PlayerPrefab : MonoBehaviour
         anim.runtimeAnimatorController = animCon[playerId];
         lastPosition = Vector3.zero;
         currentPosition = Vector3.zero;
+
+        velocityVec = Vector2.zero;
+        lastDirectionVec = Vector2.zero;
+
         this.playerId = playerId;
 
         if (id.Length > 5) {
@@ -49,7 +53,8 @@ public class PlayerPrefab : MonoBehaviour
     {
         lastPosition = currentPosition;
         currentPosition = new Vector3(x, y);
-        transform.position = currentPosition;
+        //transform.position = currentPosition;
+        transform.position = Vector2.Lerp(transform.position, currentPosition, Time.deltaTime * 3);
 
         velocityVec = new Vector2 (velX, velY);
 
@@ -76,10 +81,14 @@ public class PlayerPrefab : MonoBehaviour
 
         anim.SetFloat("Speed", velocityVec.magnitude);
 
-        if (lastDirectionVec.x != 0)
+        Debug.Log($"{lastDirectionVec}");
+
+        if (velocityVec.x != 0)
         {
+            Debug.Log($"{lastDirectionVec}");
             spriter.flipX = lastDirectionVec.x < 0;
         }
+        //spriter.flipX = lastDirectionVec.x < 0;
     }
 
     void OnCollisionStay2D(Collision2D collision)
