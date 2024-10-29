@@ -163,7 +163,8 @@ public class NetworkManager : MonoBehaviour
         await Task.Delay(GameManager.instance.latency);
         
         // 패킷 전송
-        stream.Write(packet, 0, packet.Length);
+        if(tcpClient.Connected)
+            stream.Write(packet, 0, packet.Length);
     }
 
     void SendInitialPacket() {
@@ -279,6 +280,12 @@ public class NetworkManager : MonoBehaviour
     }
 
     void HandleNormalPacket(byte[] packetData) {
+
+        if (!tcpClient.Connected)
+        {
+            return;
+        }
+
         // 패킷 데이터 처리
         var response = Packets.Deserialize<Response>(packetData);
         // Debug.Log($"HandlerId: {response.handlerId}, responseCode: {response.responseCode}, timestamp: {response.timestamp}");
@@ -309,6 +316,11 @@ public class NetworkManager : MonoBehaviour
 
     void HandleLocationPacket(byte[] data) {
         try {
+            if(!tcpClient.Connected)
+            {
+                return;
+            }
+
             LocationUpdate response;
 
             if (data.Length > 0) {
@@ -330,6 +342,11 @@ public class NetworkManager : MonoBehaviour
         Ping response;
         try
         {
+            if (!tcpClient.Connected)
+            {
+                return;
+            }
+
             response = Packets.Deserialize<Ping>(data);
 
             SendPongPacket();
@@ -337,6 +354,23 @@ public class NetworkManager : MonoBehaviour
         catch (Exception e)
         {
             Debug.LogError($"Error HandlePingPacket: {e.Message}");
+        }
+    }
+
+    private void OnDestroy()
+    {
+        // 소켓이 연결 중이면 Disconnect
+        try
+        {
+            if (tcpClient.Connected)
+            {
+                tcpClient.Close();
+                Debug.Log("Socket Close Complete");
+            }
+        }
+        catch (Exception e)
+        {
+            Debug.LogError($"Socket Close Error : {e.Message}");
         }
     }
 }

@@ -81,11 +81,11 @@ public class PlayerPrefab : MonoBehaviour
 
         anim.SetFloat("Speed", velocityVec.magnitude);
 
-        Debug.Log($"{lastDirectionVec}");
+        //Debug.Log($"{lastDirectionVec}");
 
         if (velocityVec.x != 0)
         {
-            Debug.Log($"{lastDirectionVec}");
+            //Debug.Log($"{lastDirectionVec}");
             spriter.flipX = lastDirectionVec.x < 0;
         }
         //spriter.flipX = lastDirectionVec.x < 0;
