@@ -9,6 +9,7 @@ using UnityEngine.UI;
 public class Player : MonoBehaviour
 {
     public Vector2 inputVec;
+    public Vector2 velocityVec;
     public float speed;
     public string deviceId;
     public RuntimeAnimatorController[] animCon;
@@ -38,6 +39,14 @@ public class Player : MonoBehaviour
         anim.runtimeAnimatorController = animCon[GameManager.instance.playerId];
     }
 
+    public void UpdatePosition(float x, float y, float velX, float velY)
+    {
+        Vector2 pos = new Vector2(x, y);
+        velocityVec = new Vector2(velX, velY);
+
+        rigid.MovePosition(pos);
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -48,7 +57,7 @@ public class Player : MonoBehaviour
         inputVec.y = Input.GetAxisRaw("Vertical");
 
         // 위치 이동 패킷 전송 -> 서버로
-        NetworkManager.instance.SendLocationUpdatePacket(rigid.position.x, rigid.position.y);
+        NetworkManager.instance.SendLocationUpdatePacket(rigid.position.x, rigid.position.y, inputVec.x, inputVec.y);
     }
 
 
@@ -57,10 +66,10 @@ public class Player : MonoBehaviour
             return;
         }
         // 힘을 준다.
-        rigid.AddForce(inputVec);
+        //rigid.AddForce(inputVec);
 
         // 속도 제어
-        rigid.velocity = inputVec;
+        //rigid.velocity = inputVec;
 
         // 위치 이동
         Vector2 nextVec = inputVec * speed * Time.fixedDeltaTime;

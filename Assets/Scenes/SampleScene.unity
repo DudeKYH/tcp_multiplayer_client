@@ -17755,7 +17755,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   inputVec: {x: 0, y: 0}
-  speed: 0
+  velocityVec: {x: 0, y: 0}
+  speed: 3
   deviceId: 
   animCon:
   - {fileID: 9100000, guid: 6bbac7362c93f4ab8acdebb5c17b7cc0, type: 2}

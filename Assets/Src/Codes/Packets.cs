@@ -65,6 +65,11 @@ public class LocationUpdatePayload {
     public float x { get; set; }
     [ProtoMember(2, IsRequired = true)]
     public float y { get; set; }
+    [ProtoMember(3, IsRequired = true)]
+    public float velX { get; set; }
+
+    [ProtoMember(4, IsRequired = true)]
+    public float velY { get; set; }
 }
 
 [ProtoContract]
@@ -87,6 +92,12 @@ public class LocationUpdate
 
         [ProtoMember(4)]
         public float y { get; set; }
+
+        [ProtoMember(5)]
+        public float velX { get; set; }
+
+        [ProtoMember(6)]
+        public float velY { get; set; }
     }
 }
 

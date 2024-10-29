@@ -13,6 +13,9 @@ public class PlayerPrefab : MonoBehaviour
     private Vector3 currentPosition;
     private uint playerId;
     TextMeshPro myText;
+
+    private Vector2 velocityVec;
+    private Vector2 lastDirectionVec;
     
     void Awake()
     {
@@ -42,11 +45,16 @@ public class PlayerPrefab : MonoBehaviour
     }
 
     // 서버로부터 위치 업데이트를 수신할 때 호출될 메서드
-    public void UpdatePosition(float x, float y)
+    public void UpdatePosition(float x, float y, float velX, float velY)
     {
         lastPosition = currentPosition;
         currentPosition = new Vector3(x, y);
         transform.position = currentPosition;
+
+        velocityVec = new Vector2 (velX, velY);
+
+        if (velocityVec.x > 0) { lastDirectionVec = Vector2.right; }
+        if (velocityVec.x < 0) { lastDirectionVec = Vector2.left; }
 
         UpdateAnimation();
     }
@@ -64,13 +72,13 @@ public class PlayerPrefab : MonoBehaviour
     private void UpdateAnimation()
     {
         // 현재 위치와 이전 위치를 비교하여 이동 벡터 계산
-        Vector2 inputVec = currentPosition - lastPosition;
+        // Vector2 inputVec = currentPosition - lastPosition;
 
-        anim.SetFloat("Speed", inputVec.magnitude);
+        anim.SetFloat("Speed", velocityVec.magnitude);
 
-        if (inputVec.x != 0)
+        if (lastDirectionVec.x != 0)
         {
-            spriter.flipX = inputVec.x < 0;
+            spriter.flipX = lastDirectionVec.x < 0;
         }
     }
 

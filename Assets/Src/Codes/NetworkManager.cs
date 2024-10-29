@@ -178,31 +178,48 @@ public class NetworkManager : MonoBehaviour
         SendPacket(initialPayload, (uint)Packets.HandlerIds.Init);
     }
 
-    public void SendLocationUpdatePacket(float x, float y) {
+    public void SendLocationUpdatePacket(float x, float y, float velX, float velY) {
         LocationUpdatePayload locationUpdatePayload = new LocationUpdatePayload
         {
             x = x,
             y = y,
+            velX = velX,
+            velY = velY,
         };
 
         SendPacket(locationUpdatePayload, (uint)Packets.HandlerIds.LocationUpdate);
     }
 
-    public ulong getCurrentTimestamp()
+    public ulong GetCurrentTimestamp()
     {
         var timeSpan = (DateTime.UtcNow - new DateTime(1970, 1, 1, 0, 0, 0)); 
         return (ulong)timeSpan.TotalMilliseconds;
     }
 
-    public void SendPongPacket(float x, float y)
+    async public void SendPongPacket()
     {
-        LocationUpdatePayload locationUpdatePayload = new LocationUpdatePayload
+        Ping pongPayload = new Ping
         {
-            x = x,
-            y = y,
+            timestamp = GetCurrentTimestamp()
         };
 
-        SendPacket(locationUpdatePayload, (uint)Packets.HandlerIds.LocationUpdate);
+        // ArrayBufferWriter<byte>를 사용하여 직렬화
+        var payloadWriter = new ArrayBufferWriter<byte>();
+        Packets.Serialize(payloadWriter, pongPayload);
+        byte[] payloadData = payloadWriter.WrittenSpan.ToArray();
+
+        // 헤더 생성
+        byte[] header = CreatePacketHeader(payloadData.Length, Packets.PacketType.Ping);
+
+        // 패킷 생성
+        byte[] packet = new byte[header.Length + payloadData.Length];
+        Array.Copy(header, 0, packet, 0, header.Length);
+        Array.Copy(payloadData, 0, packet, header.Length, payloadData.Length);
+
+        await Task.Delay(GameManager.instance.latency);
+
+        // 패킷 전송
+        stream.Write(packet, 0, packet.Length);
     }
 
 
@@ -253,6 +270,9 @@ public class NetworkManager : MonoBehaviour
                     break;
                 case Packets.PacketType.Location:
                     HandleLocationPacket(packetData);
+                    break;
+                case Packets.PacketType.Ping:
+                    HandlePingPacket(packetData);
                     break;
             }
         }
