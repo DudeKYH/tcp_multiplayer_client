@@ -4,6 +4,7 @@ using System.IO;
 using System.Buffers;
 using System.Collections.Generic;
 using System;
+using System.Runtime.Serialization;
 
 public class Packets : MonoBehaviour
 {
@@ -121,4 +122,17 @@ public class Ping
 {
     [ProtoMember(1)]
     public ulong timestamp { get; set; }
+}
+
+[DataContract]
+public class InitialResponseData
+{
+    [DataMember]
+    public string userId { get; set; }
+
+    [DataMember]
+    public float x { get; set; }
+
+    [DataMember]
+    public float y { get; set; }
 }

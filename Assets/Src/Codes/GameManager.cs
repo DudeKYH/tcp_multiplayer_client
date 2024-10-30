@@ -29,12 +29,15 @@ public class GameManager : MonoBehaviour
         playerId = (uint)Random.Range(0, 4);
     }
 
-    public void GameStart() {
+    public void GameStart(float x, float y) {
         player.deviceId = deviceId;
         player.gameObject.SetActive(true);
         hud.SetActive(true);
         GameStartUI.SetActive(false);
         isLive = true;
+
+        Vector2 initPos = new Vector2(x, y);
+        player.InitPosition(initPos);
 
         AudioManager.instance.PlayBgm(true);
         AudioManager.instance.PlaySfx(AudioManager.Sfx.Select);

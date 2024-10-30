@@ -2,9 +2,12 @@ using System;
 using System.Buffers;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Sockets;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEditor.ShaderGraph.Serialization;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -197,11 +200,11 @@ public class NetworkManager : MonoBehaviour
         return (ulong)timeSpan.TotalMilliseconds;
     }
 
-    async public void SendPongPacket()
+    async public void SendPongPacket(Ping data)
     {
         Ping pongPayload = new Ping
         {
-            timestamp = GetCurrentTimestamp()
+            timestamp = data.timestamp
         };
 
         // ArrayBufferWriter<byte>를 사용하여 직렬화
@@ -298,7 +301,13 @@ public class NetworkManager : MonoBehaviour
 
         if (response.data != null && response.data.Length > 0) {
             if (response.handlerId == 0) {
-                GameManager.instance.GameStart();
+                InitialResponseData dataJson = Activator.CreateInstance<InitialResponseData>();
+                MemoryStream ms = new MemoryStream(response.data);
+                System.Runtime.Serialization.Json.DataContractJsonSerializer ser = new System.Runtime.Serialization.Json.DataContractJsonSerializer(dataJson.GetType());
+                dataJson = (InitialResponseData)ser.ReadObject(ms);
+                ms.Close();
+
+                GameManager.instance.GameStart(dataJson.x, dataJson.y);
             }
             ProcessResponseData(response.data);
         }
@@ -349,7 +358,7 @@ public class NetworkManager : MonoBehaviour
 
             response = Packets.Deserialize<Ping>(data);
 
-            SendPongPacket();
+            SendPongPacket(response);
         }
         catch (Exception e)
         {

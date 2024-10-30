@@ -54,7 +54,7 @@ public class PlayerPrefab : MonoBehaviour
         lastPosition = currentPosition;
         currentPosition = new Vector3(x, y);
         //transform.position = currentPosition;
-        transform.position = Vector2.Lerp(transform.position, currentPosition, Time.deltaTime * 3);
+        transform.position = Vector2.Lerp(transform.position, currentPosition, Time.deltaTime);
 
         velocityVec = new Vector2 (velX, velY);
 

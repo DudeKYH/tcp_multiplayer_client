@@ -25,6 +25,7 @@ public class Player : MonoBehaviour
         spriter = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         myText = GetComponentInChildren<TextMeshPro>();
+        Debug.Log("1");
     }
 
     void OnEnable() {
@@ -37,6 +38,11 @@ public class Player : MonoBehaviour
         myText.GetComponent<MeshRenderer>().sortingOrder = 6;
         
         anim.runtimeAnimatorController = animCon[GameManager.instance.playerId];
+    }
+
+    public void InitPosition(Vector2 initPos)
+    {
+        transform.position = initPos;
     }
 
     public void UpdatePosition(float x, float y, float velX, float velY)
