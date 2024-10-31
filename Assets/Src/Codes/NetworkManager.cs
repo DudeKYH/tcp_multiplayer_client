@@ -301,6 +301,7 @@ public class NetworkManager : MonoBehaviour
 
         if (response.data != null && response.data.Length > 0) {
             if (response.handlerId == 0) {
+                // InitialResponse의 Data 필드에는 DB에 저장된 x, y 값이 담겨있다.
                 InitialResponseData dataJson = Activator.CreateInstance<InitialResponseData>();
                 MemoryStream ms = new MemoryStream(response.data);
                 System.Runtime.Serialization.Json.DataContractJsonSerializer ser = new System.Runtime.Serialization.Json.DataContractJsonSerializer(dataJson.GetType());
