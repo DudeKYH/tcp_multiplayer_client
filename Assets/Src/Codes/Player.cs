@@ -25,7 +25,6 @@ public class Player : MonoBehaviour
         spriter = GetComponent<SpriteRenderer>();
         anim = GetComponent<Animator>();
         myText = GetComponentInChildren<TextMeshPro>();
-        Debug.Log("1");
     }
 
     void OnEnable() {

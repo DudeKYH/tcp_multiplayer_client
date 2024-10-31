@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     public Player player;
     public GameObject hud;
     public GameObject GameStartUI;
+    public GameObject ground;
 
     void Awake() {
         instance = this;
@@ -38,6 +39,7 @@ public class GameManager : MonoBehaviour
 
         Vector2 initPos = new Vector2(x, y);
         player.InitPosition(initPos);
+        ground.transform.position = initPos;
 
         AudioManager.instance.PlayBgm(true);
         AudioManager.instance.PlaySfx(AudioManager.Sfx.Select);
